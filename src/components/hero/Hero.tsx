@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const HeroScene = dynamic(
   () => import("./HeroScene").then((m) => m.HeroScene),
@@ -11,13 +12,10 @@ const HeroScene = dynamic(
 export function Hero() {
   return (
     <section className="relative h-screen w-full flex items-center overflow-hidden">
-
-      {/* Canvas 3D — fondo */}
       <div className="absolute inset-0 z-0">
         <HeroScene />
       </div>
 
-      {/* Contenido */}
       <div className="relative z-10 px-8 md:px-16 max-w-2xl">
         <motion.p
           className="font-mono text-xs tracking-widest uppercase text-ink-muted mb-6"
@@ -56,22 +54,22 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
         >
-          <a
+          {/* ← Link en lugar de <a> */}
+          <Link
             href="/work"
             className="font-body text-sm text-ink border-b border-ink pb-0.5 hover:text-cosmos hover:border-cosmos transition-colors"
           >
             ver proyectos →
-          </a>
-          <a
+          </Link>
+          <Link
             href="/about"
             className="font-body text-sm text-ink-muted hover:text-ink transition-colors"
           >
             sobre mí
-          </a>
+          </Link>
         </motion.div>
       </div>
 
-      {/* Gradiente inferior */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-sand to-transparent z-10 pointer-events-none" />
     </section>
   );
