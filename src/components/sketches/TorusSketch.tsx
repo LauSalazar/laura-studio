@@ -8,12 +8,19 @@ export function TorusSketch() {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // cargar p5 desde CDN para evitar problemas con basePath en GitHub Pages
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js";
+    script.async = true;
+    document.head.appendChild(script);
+
     let p5Instance: { remove: () => void } | null = null;
 
-    import("p5").then((mod) => {
-      const p5 = mod.default;
+    script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p5 = (window as any).p5;
 
-      const sketch = (p: InstanceType<typeof p5>) => {
+      const sketch = (p: any) => {
         let x: number, y: number;
         let vx: number, vy: number;
         let angle = 0;
@@ -27,10 +34,8 @@ export function TorusSketch() {
           const container = containerRef.current!;
           const cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
           cnv.parent(container);
-          // eliminar cualquier canvas huérfano dentro del contenedor
           const canvases = container.querySelectorAll("canvas");
-          canvases.forEach((c, i) => { if (i > 0) c.remove(); });
-
+          canvases.forEach((c: HTMLCanvasElement, i: number) => { if (i > 0) c.remove(); });
           p.smooth();
           x = p.width / 2;
           y = p.height / 2;
@@ -53,7 +58,6 @@ export function TorusSketch() {
           const mag = Math.sqrt(vx * vx + vy * vy);
           vx = (vx / mag) * SPEED;
           vy = (vy / mag) * SPEED;
-
           angle += 0.01;
           drawTorus(x, y, angle);
         };
@@ -108,11 +112,15 @@ export function TorusSketch() {
         };
       };
 
-      p5Instance = new p5(sketch) as { remove: () => void };
-    });
+      p5Instance = new p5(sketch);
+    };
 
     return () => {
       p5Instance?.remove();
+      // limpiar el script del DOM
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
     };
   }, []);
 
