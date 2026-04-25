@@ -1,17 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+  trailingSlash: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-    ],
-  },
-  experimental: {
-    mdxRs: true,
+    unoptimized: true, // GitHub Pages no soporta optimización de imágenes
   },
 };
-
 
 module.exports = nextConfig;
