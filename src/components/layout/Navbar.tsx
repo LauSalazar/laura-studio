@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
 const links = [
-  { href: "/work", label: "work" },
-  { href: "/about", label: "about" },
-  { href: "/contact", label: "contact" },
+  { href: "/work", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Navbar() {
