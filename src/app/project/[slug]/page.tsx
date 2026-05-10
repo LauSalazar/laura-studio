@@ -2,7 +2,10 @@ import { Navbar } from "@/components/layout/Navbar";
 import { projects } from "@/lib/project";
 
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+  return [
+    { slug: "toroide" },
+    { slug: "arte-electronico" }, 
+  ];
 }
 
 export default function ProjectPage({
