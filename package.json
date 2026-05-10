@@ -12,6 +12,7 @@
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.16.8",
     "clsx": "^2.1.1",
+    "d3": "^7.9.0",
     "framer-motion": "^11.3.19",
     "next": "14.2.5",
     "p5": "^2.2.3",
@@ -20,6 +21,7 @@
     "three": "^0.166.1"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "^20",
     "@types/p5": "^1.7.7",
     "@types/react": "^18",

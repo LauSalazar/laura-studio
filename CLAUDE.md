@@ -79,6 +79,6 @@ docs/                     # Documentación interna del proyecto
 - El portafolio está en **español e inglés** (i18n a futuro, por ahora inglés)
 
 ## Localización
-- Laura está basada en **Medellín, Colombia**
+- Laura está en **Medellín, Colombia**
 - Zona horaria: `America/Bogota` (UTC-5)
 - Disponible para proyectos remotos

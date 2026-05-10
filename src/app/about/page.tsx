@@ -23,7 +23,7 @@ export default function AboutPage() {
 
         <div className="space-y-6 font-body text-ink-muted leading-relaxed">
           <p>
-            Artista digital y desarrolladora basada en Medellín, Colombia.
+            Artista digital y desarrolladora con base en Medellín, Colombia.
             Exploro la intersección entre geometría, naturaleza y código.
           </p>
           <p>

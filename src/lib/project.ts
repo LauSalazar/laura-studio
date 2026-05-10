@@ -52,4 +52,14 @@ export const projects: Project[] = [
     type: "interactive",
     description: "Toroide 3D en perspectiva que se mueve aleatoriamente por el canvas.",
   },
+  {
+    title: "Cartografía del Arte Electrónico",
+    slug: "arte-electronico",
+    category: "experimento",
+    tags: ["D3.js", "hipertexto", "investigación", "mapa nodal"],
+    year: 2025,
+    cover: "/images/cartografia/cover.jpg",
+    type: "interactive",
+    description: "Mapa nodal interactivo que explora la historia del arte electrónico de forma no lineal.",
+  },
 ];
