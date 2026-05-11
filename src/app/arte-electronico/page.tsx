@@ -12,6 +12,7 @@ const CONTENIDO: Record<
     texto: string;
     referentes: string[];
     conexiones: string[];
+    fuentes?: { label: string; url: string }[];
   }
 > = {
   central: {
@@ -19,6 +20,12 @@ const CONTENIDO: Record<
     texto: "Una exploración no lineal de las relaciones entre arte, tecnología e interacción. Navega los nodos para descubrir cómo el arte electrónico se ha transformado desde los años 50 hasta el presente.",
     referentes: [],
     conexiones: ["Orígenes", "La pantalla", "Internet", "Algoritmo", "Interacción", "Presente"],
+    fuentes: [
+        { label: "Ars Electronica", url: "https://ars.electronica.art/news/en/" },
+        { label: "The language of media, Lev Manovich", url: "https://dss-edit.com/plu/Manovich-Lev_The_Language_of_the_New_Media.pdf" },
+        { label: "ZKM Center for Art and Media", url: "https://zkm.de/en" },
+        { label: "Rhizome", url: "https://rhizome.org/" },
+    ],
   },
   origenes: {
     titulo: "Orígenes",
@@ -248,6 +255,27 @@ export default function CartografiaPage() {
                   </div>
                 </div>
               )}
+
+              {contenido.fuentes && contenido.fuentes.length > 0 && (
+                <div style={{ marginBottom: 32 }}>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "#8B949E", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 12 }}>
+                    Fuentes
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {contenido.fuentes.map((f) => (
+                        <a
+                        key={f.url}
+                        href={f.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "#4A90E2", textDecoration: "none", borderBottom: "0.5px solid #1A3050" }}
+                        >
+                        ↗ {f.label}
+                        </a>
+                    ))}
+                    </div>
+                </div>
+                )}
 
               <div
                 style={{
