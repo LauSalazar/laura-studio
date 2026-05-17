@@ -4,6 +4,7 @@ export function generateStaticParams() {
   return [
     { slug: "toroide" },
     { slug: "arte-electronico" },
+    { slug: "la-final" },
   ];
 }
 

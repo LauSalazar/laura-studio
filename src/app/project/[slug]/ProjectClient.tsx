@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 
 const REDIRECTS: Record<string, string> = {
   "arte-electronico": "/arte-electronico",
+  "la-final": "/la-final",
 };
 
 export function ProjectClient({ slug }: { slug: string }) {
