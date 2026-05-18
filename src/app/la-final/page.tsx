@@ -2,6 +2,60 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import HotspotPoint from "../../components/final/HotspotPoint";
+import HotspotModal from "../../components/final/HostpotModal";
+
+const HOTSPOTS = [
+  {
+    id: 'cup',
+    label: 'Cup',
+    position: { lon: 180, lat: 50 },
+    data: {
+      title: 'La Copa',
+      description:
+        'Quien gana no es solo quien hace más puntos; es el resultado visible de una red invisible de sincronías corporales, decisiones instantáneas, confianza mutua y adaptación constante.',
+      image: '/laura-studio/images/thropy.jpg',
+      imageAlt: 'La copa',
+      stats: [
+        { label: 'Movimiento',  value: 'Pensamiento en acción' },
+        { label: 'Equipo',  value: 'Inteligencia compartica'   },
+        { label: 'Victoria', value: 'Sincronia hecha resultado' },
+      ],
+    },
+  },
+  {
+    id: 'dupla1',
+    label: 'Dupla 1',
+    position: { lon: 240, lat: -18 },
+    data: {
+      title: 'Presentación dupla 1',
+      description:
+        'Se distinguen por su precisión técnica y por convertir sus capacidades físicas en decisiones estratégicas dentro de la cancha.',
+      image: '/laura-studio/images/dupla1.png',
+      imageAlt: 'Dupla 1',
+      stats: [
+        { label: 'Jugador 1', value: 'Laura' },
+        { label: 'Jugador 2', value: 'Juliana' }, 
+      ],
+    },
+  },
+  {
+    id: 'dupla2',
+    label: 'Dupla 2',
+    position: { lon: 120, lat: -18 },
+    data: {
+      title: 'Presentación dupla 2',
+      description:
+        'Destacan por un juego de potencia, donde fuerza y control corporal definen su presencia en la cancha.',
+      image: '/laura-studio/images/dupla2.png',
+      imageAlt: 'Dupla 2',
+      stats: [
+        { label: 'Jugador 1', value: 'Sara' },
+        { label: 'Jugador 2', value: 'Tatiana' },
+      ],
+    },
+  },
+];
 
 export default function FinalPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,7 +69,6 @@ export default function FinalPage() {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sphereMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const stateRef = useRef({
     isPointerDown: false,
     lastX: 0,
@@ -25,6 +78,8 @@ export default function FinalPage() {
     targetLon: 0,
     targetLat: 0,
   });
+  const [activeHotspot, setActiveHotspot] = useState<typeof HOTSPOTS[0] | null>(null);
+  const [threeReady, setThreeReady]       = useState(false);
 
   const DEFAULT_IMAGE_PATH = "/laura-studio/images/default-360.png";
 
@@ -78,7 +133,9 @@ export default function FinalPage() {
     sphereMatRef.current = sphereMat;
 
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/laura-studio/images/default-360.png'); 
+    const texture = textureLoader.load(DEFAULT_IMAGE_PATH); 
+
+    setThreeReady(true);
 
     const material = new THREE.MeshBasicMaterial({ 
         map: texture 
@@ -172,7 +229,7 @@ export default function FinalPage() {
       const t = clock.getElapsedTime();
 
       if (autoRotate && !stateRef.current.isPointerDown) {
-        stateRef.current.targetLon += 0.04;
+        stateRef.current.targetLon += 0.00;
       }
 
       stateRef.current.lon += (stateRef.current.targetLon - stateRef.current.lon) * 0.06;
@@ -425,122 +482,8 @@ export default function FinalPage() {
           >
             La Final 360°
           </h1>
-          <p
-            style={{
-              fontSize: 10,
-              letterSpacing: "0.2em",
-              color: "rgba(0,229,255,0.5)",
-              marginTop: 4,
-              textTransform: "uppercase",
-              margin: "4px 0 0 0",
-            }}
-          >
-            Three.js · WebGL · Equirectangular
-          </p>
         </div>
-
-
-        <div
-          style={{
-            position: "absolute",
-            right: 20,
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 160,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            pointerEvents: "none",
-          }}
-        >
-          <div
-            style={{
-              background: "rgba(0,0,0,0.4)",
-              border: "1px solid rgba(0,229,255,0.15)",
-              padding: "10px 14px",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 9,
-                letterSpacing: "0.2em",
-                color: "rgba(0,229,255,0.4)",
-                textTransform: "uppercase",
-                marginBottom: 4,
-              }}
-            >
-              FOV
-            </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: "#00e5ff",
-                fontFamily: "'Orbitron', monospace",
-              }}
-            >
-              {Math.round(currentFOV)}°
-            </div>
-          </div>
-          <div
-            style={{
-              background: "rgba(0,0,0,0.4)",
-              border: "1px solid rgba(0,229,255,0.15)",
-              padding: "10px 14px",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 9,
-                letterSpacing: "0.2em",
-                color: "rgba(0,229,255,0.4)",
-                textTransform: "uppercase",
-                marginBottom: 4,
-              }}
-            >
-              Modo
-            </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: "#00e5ff",
-                fontFamily: "'Orbitron', monospace",
-              }}
-            >
-              {imageLoaded ? "360°" : "LIBRE"}
-            </div>
-          </div>
-          <div
-            style={{
-              background: "rgba(0,0,0,0.4)",
-              border: "1px solid rgba(0,229,255,0.15)",
-              padding: "10px 14px",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 9,
-                letterSpacing: "0.2em",
-                color: "rgba(0,229,255,0.4)",
-                textTransform: "uppercase",
-                marginBottom: 4,
-              }}
-            >
-              Rotación
-            </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: "#00e5ff",
-                fontFamily: "'Orbitron', monospace",
-              }}
-            >
-              {autoRotate ? "AUTO" : "MANUAL"}
-            </div>
-          </div>
-        </div>
+          
 
         <div
           style={{
@@ -583,35 +526,6 @@ export default function FinalPage() {
             ⟳ Reset
           </button>
           <div style={{ width: 1, height: 30, background: "rgba(0,229,255,0.25)" }} />
-          <button
-            onClick={handleToggleAutoRotate}
-            style={{
-              background: autoRotate ? "rgba(0,229,255,0.25)" : "rgba(0,229,255,0.08)",
-              border: autoRotate ? "1px solid #00e5ff" : "1px solid rgba(0,229,255,0.3)",
-              color: "#00e5ff",
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 10,
-              letterSpacing: "0.15em",
-              padding: "8px 16px",
-              cursor: "pointer",
-              textTransform: "uppercase",
-              transition: "all 0.2s",
-              backdropFilter: "blur(8px)",
-              boxShadow: autoRotate ? "0 0 30px rgba(0,229,255,0.5)" : "none",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0,229,255,0.2)";
-              e.currentTarget.style.borderColor = "rgba(0,229,255,0.8)";
-              e.currentTarget.style.boxShadow = "0 0 20px rgba(0,229,255,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = autoRotate ? "rgba(0,229,255,0.25)" : "rgba(0,229,255,0.08)";
-              e.currentTarget.style.borderColor = autoRotate ? "#00e5ff" : "rgba(0,229,255,0.3)";
-              e.currentTarget.style.boxShadow = autoRotate ? "0 0 30px rgba(0,229,255,0.5)" : "none";
-            }}
-          >
-            ⟲ Auto
-          </button>
           <div style={{ width: 1, height: 30, background: "rgba(0,229,255,0.25)" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <label
@@ -640,34 +554,7 @@ export default function FinalPage() {
             />
           </div>
           <div style={{ width: 1, height: 30, background: "rgba(0,229,255,0.25)" }} />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              background: "rgba(0,229,255,0.08)",
-              border: "1px solid rgba(0,229,255,0.3)",
-              color: "#00e5ff",
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 10,
-              letterSpacing: "0.15em",
-              padding: "8px 16px",
-              cursor: "pointer",
-              textTransform: "uppercase",
-              transition: "all 0.2s",
-              backdropFilter: "blur(8px)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0,229,255,0.2)";
-              e.currentTarget.style.borderColor = "rgba(0,229,255,0.8)";
-              e.currentTarget.style.boxShadow = "0 0 20px rgba(0,229,255,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,229,255,0.08)";
-              e.currentTarget.style.borderColor = "rgba(0,229,255,0.3)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            ⊕ Imagen
-          </button>
+          
           <div style={{ width: 1, height: 30, background: "rgba(0,229,255,0.25)" }} />
           <button
             onClick={handleToggleFullscreen}
@@ -698,6 +585,26 @@ export default function FinalPage() {
             ⊞ VR
           </button>
         </div>
+
+        {/* Hotspot points — rendered as CSS overlays */}
+      {threeReady && HOTSPOTS.map((hs) => (
+        <HotspotPoint
+          key={hs.id}
+          position={hs.position}
+          label={hs.label}
+          camera={cameraRef.current!}
+          renderer={rendererRef.current!}
+          scene={sceneRef.current!}
+          onClick={() => setActiveHotspot(hs)}
+        />
+      ))}
+
+      {/* Modal */}
+      <HotspotModal
+        isOpen={!!activeHotspot}
+        onClose={() => setActiveHotspot(null)}
+        data={activeHotspot?.data}
+      />
       </div>
 
       {toast && (
