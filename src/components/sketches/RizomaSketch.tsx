@@ -35,7 +35,7 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
 
             let vx: number, vy: number;
 
-            const IMG_SIZE = 50;
+            const IMG_SIZE = 40;
             const SPEED = 1.5;
             const STEP_DISTANCE = IMG_SIZE / 2; // distancia entre imágenes = ancho/2
 
@@ -82,9 +82,7 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
                     y += vy * SPEED;
                     distanceSinceLastStamp += SPEED;
 
-                    // Rebotar en bordes girando 90°
                     const margin = IMG_SIZE;
-                    let bounced = false;
 
                     if (x < margin) {
                         x = margin;
@@ -121,6 +119,9 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
                 // Dibujar todas las imágenes del rastro
                 if (img) {
                     for (const point of trail) {
+                        p.drawingContext.shadowBlur = 40; // Tamaño o radio del resplandor
+                        p.drawingContext.shadowColor = p.color(255, 255, 255);
+
                         p.image(img, point.x - IMG_SIZE / 2, point.y - IMG_SIZE / 2, IMG_SIZE, IMG_SIZE);
                     }
                 }

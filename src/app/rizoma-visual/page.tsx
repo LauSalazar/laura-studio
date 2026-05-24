@@ -20,7 +20,7 @@ export default function RizomaVisualPage() {
                         Arte generativo — 2026
                     </p>
                     <h1 className="font-display font-light text-4xl md:text-5xl text-ink">
-                        Rizoma visual
+                        Luz en el camino
                     </h1>
                 </div>
 
@@ -38,7 +38,7 @@ export default function RizomaVisualPage() {
                             Descripción
                         </p>
                         <p className="font-body text-ink-muted leading-relaxed">
-                            Rizoma visual creado con p5.js, donde cada imagen es una representación unica creada cada vez que se recarga la página.
+                            Seamos luz en el camino, incluso en medio del lodo.
                         </p>
                     </div>
                     </div>
