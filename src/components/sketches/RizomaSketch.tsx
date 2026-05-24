@@ -126,18 +126,22 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
                     }
                 }
 
-                // HUD: tiempo restante
+                // HUD: tiempo restante (texto claro con contorno para buen contraste)
                 const remaining = Math.max(0, durationRef.current - (p.millis() - startTime) / 1000);
-                p.fill(0, 0, 0, 180);
-                p.noStroke();
                 p.textSize(14);
-                p.color(234);
+                // Relleno blanco semi-transparente
+                p.fill(255, 240);
+                // Trazo oscuro para contorno y legibilidad sobre fondos claros/oscuro
+                p.stroke(0, 150);
+                p.strokeWeight(2);
                 p.textAlign(p.RIGHT, p.TOP);
                 if (isDrawing) {
                     p.text(`Dibujando: ${remaining.toFixed(1)}s`, p.width - 10, 10);
                 } else {
                     p.text("✓ Dibujo completo", p.width - 10, 10);
                 }
+                // Restaurar sin trazo por si otros elementos no necesitan contorno
+                p.noStroke();
             };
         };
 
@@ -153,17 +157,19 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
             {/* Panel de control */}
             <div
                 style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1rem",
-                    padding: "0.5rem 1rem",
-                    background: "rgba(0,0,0,0.07)",
-                    borderBottom: "1px solid rgba(0,0,0,0.1)",
-                    fontFamily: "monospace",
-                    fontSize: 13,
-                }}
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
+                        padding: "0.5rem 1rem",
+                        background: "rgba(0,0,0,0.07)",
+                        borderBottom: "1px solid rgba(0,0,0,0.1)",
+                        fontFamily: "monospace",
+                        fontSize: 13,
+                        flexWrap: "wrap",
+                        justifyContent: "space-between",
+                    }}
             >
-                <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0 }}>
                     <span>⏱ Duración:</span>
                     <input
                         type="range"
@@ -174,23 +180,27 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
                         onChange={(e) => setDuration(Number(e.target.value))}
                         style={{ width: 100 }}
                     />
-                    <span style={{ minWidth: 30 }}>{duration}s</span>
+                    <span style={{ minWidth: 32, marginLeft: 6 }}>{duration}s</span>
                 </label>
-                <button
-                    onClick={() => {
-                        onRestart?.();
-                        setRestartTrigger(prev => prev + 1);
-                    }}
-                    style={{
-                        padding: "0.25rem 0.75rem",
-                        borderRadius: 4,
-                        border: "1px solid #999",
-                        cursor: "pointer",
-                        background: "#fff",
-                    }}
-                >
-                    ↺ Reiniciar
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+                    <button
+                        onClick={() => {
+                            onRestart?.();
+                            setRestartTrigger(prev => prev + 1);
+                        }}
+                        style={{
+                            padding: "0.25rem 0.6rem",
+                            borderRadius: 4,
+                            border: "1px solid #999",
+                            cursor: "pointer",
+                            background: "#fff",
+                            fontSize: 12,
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        ↺ Reiniciar
+                    </button>
+                </div>
             </div>
 
             {/* Canvas */}
