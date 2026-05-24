@@ -5,6 +5,7 @@ export function generateStaticParams() {
     { slug: "toroide" },
     { slug: "arte-electronico" },
     { slug: "la-final" },
+    { slug: "rizoma-visual" },
   ];
 }
 

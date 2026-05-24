@@ -1,26 +1,23 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useP5Loader } from "../../lib/useP5Loader";
 
 export function TorusSketch() {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const isP5Loaded = useP5Loader();
+
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // cargar p5 desde CDN para evitar problemas con basePath en GitHub Pages
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js";
-    script.async = true;
-    document.head.appendChild(script);
+    if (!isP5Loaded) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p5 = (window as any).p5;
 
     let p5Instance: { remove: () => void } | null = null;
 
-    script.onload = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p5 = (window as any).p5;
-
-      const sketch = (p: any) => {
+    const sketch = (p: any) => {
         let x: number, y: number;
         let vx: number, vy: number;
         let angle = 0;
@@ -110,19 +107,14 @@ export function TorusSketch() {
             p.resizeCanvas(containerRef.current.offsetWidth, containerRef.current.offsetHeight);
           }
         };
-      };
-
-      p5Instance = new p5(sketch);
     };
+
+    p5Instance = new p5(sketch);
 
     return () => {
       p5Instance?.remove();
-      // limpiar el script del DOM
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
     };
-  }, []);
+  }, [isP5Loaded]);
 
   return <div ref={containerRef} className="w-full h-full" />;
 }

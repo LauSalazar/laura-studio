@@ -72,4 +72,14 @@ export const projects: Project[] = [
     type: "interactive",
     description: "Mundo inmersivo que explora un partido final de voley playa.",
   },
+  {
+    title: "Rizoma visual",
+    slug: "rizoma-visual",
+    category: "arte-generativo",
+    tags: ["p5.js", "generative art", "algoritmos"],
+    year: 2026,
+    cover: "/images/rizoma-visual/cover.jpg",
+    type: "interactive",
+    description: "Rizoma creado a partir de una galeria visual.",
+  }
 ];
