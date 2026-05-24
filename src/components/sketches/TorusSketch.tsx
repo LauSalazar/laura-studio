@@ -14,6 +14,7 @@ export function TorusSketch() {
     if (!isP5Loaded) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const p5 = (window as any).p5;
+    if (!p5) return;
 
     let p5Instance: { remove: () => void } | null = null;
 
@@ -31,7 +32,7 @@ export function TorusSketch() {
           const container = containerRef.current!;
           const cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
           cnv.parent(container);
-          const canvases = container.querySelectorAll("canvas");
+          const canvases = containerRef.current!.querySelectorAll("canvas");
           canvases.forEach((c: HTMLCanvasElement, i: number) => { if (i > 0) c.remove(); });
           p.smooth();
           x = p.width / 2;

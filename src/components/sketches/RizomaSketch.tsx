@@ -35,8 +35,8 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
 
             let vx: number, vy: number;
 
-            const IMG_SIZE = 60;
-            const SPEED = 2;
+            const IMG_SIZE = 50;
+            const SPEED = 1.5;
             const STEP_DISTANCE = IMG_SIZE / 2; // distancia entre imágenes = ancho/2
 
             let distanceSinceLastStamp = 0;
@@ -171,9 +171,9 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
                         step={1}
                         value={duration}
                         onChange={(e) => setDuration(Number(e.target.value))}
-                        style={{ width: 120 }}
+                        style={{ width: 100 }}
                     />
-                    <span style={{ minWidth: 32 }}>{duration}s</span>
+                    <span style={{ minWidth: 30 }}>{duration}s</span>
                 </label>
                 <button
                     onClick={() => {
