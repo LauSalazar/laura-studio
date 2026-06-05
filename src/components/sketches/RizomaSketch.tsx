@@ -23,10 +23,11 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
         if (!isP5Loaded) return;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const p5 = (window as any).p5;
-        if (!p5) return;
+        const p5global = (window as any).p5;
+        if (!p5global) return;
 
-        let p5Instance: { remove: () => void } | null = null;
+        let p5Instance: any = null;
+        let visibilityHandler: (() => void) | null = null;
 
         const sketch = (p: any) => {
             let x: number, y: number;
@@ -145,9 +146,30 @@ export function RizomaSketch({ onRestart }: RizomaSketchProps) {
             };
         };
 
-        p5Instance = new p5(sketch);
+        // lazy mount when visible or on interaction
+        const container = containerRef.current;
+        const mount = () => {
+            if (p5Instance) return;
+            p5Instance = new (window as any).p5(sketch);
+            try { p5Instance.frameRate?.(30); } catch (e) {}
+            visibilityHandler = () => {
+                if (document.hidden) p5Instance?.noLoop?.(); else p5Instance?.loop?.();
+            };
+            document.addEventListener('visibilitychange', visibilityHandler);
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) mount();
+        }, { threshold: 0.05 });
+        observer.observe(container);
+
+        const onInteraction = () => mount();
+        container.addEventListener('pointerdown', onInteraction, { once: true });
 
         return () => {
+            observer.disconnect();
+            container.removeEventListener('pointerdown', onInteraction);
+            if (visibilityHandler) document.removeEventListener('visibilitychange', visibilityHandler);
             p5Instance?.remove();
         };
     }, [isP5Loaded, restartTrigger]);

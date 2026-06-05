@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,3 +57,63 @@ body {
   outline: 2px solid var(--color-cosmos);
   outline-offset: 2px;
 }
+
+/* Tournament / Hotspot styles moved from inline component CSS to avoid hydration mismatches */
+.hs-wrap {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.hs-btn {
+  pointer-events: all;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.hs-btn:hover { transform: scale(1.25); }
+.hs-uni { width: 26px; height: 26px; border: 2px solid rgba(120,180,255,0.65); background: rgba(20,50,120,0.4); backdrop-filter: blur(4px); box-shadow: 0 0 10px rgba(60,140,255,0.3); }
+.hs-uni:hover { box-shadow: 0 0 20px rgba(60,200,255,0.7); }
+.hs-uni.udea { border-color: #4499ff; background: rgba(0,61,165,0.45); box-shadow: 0 0 14px rgba(0,100,255,0.5); }
+.hs-mid { width: 16px; height: 16px; border: 1.5px solid rgba(80,140,220,0.4); background: rgba(10,30,80,0.35); }
+.hs-final { width: 38px; height: 38px; border: 2px solid rgba(255,215,0,0.8); background: rgba(40,30,0,0.4); box-shadow: 0 0 24px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.15); }
+.hs-final:hover { box-shadow: 0 0 40px rgba(255,215,0,0.9); }
+.hs-label { font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; background: rgba(0,5,20,0.75); border: 1px solid rgba(80,140,220,0.22); color: rgba(160,210,255,0.85); white-space: nowrap; pointer-events: none; }
+.hs-label.udea { border-color: rgba(68,153,255,0.5); color: #88ccff; }
+.hs-label.final { border-color: rgba(255,215,0,0.5); color: #ffd700; }
+
+.t-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.t-overlay.open { opacity: 1; pointer-events: all; }
+.t-card { width: 100%; max-width: 500px; background: #02060e; border: 1px solid rgba(68,153,255,0.22); box-shadow: 0 0 80px rgba(0,80,255,0.12), inset 0 0 30px rgba(0,30,80,0.2); transform: translateY(18px) scale(0.97); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); overflow: hidden; }
+.t-overlay.open .t-card { transform: none; }
+.t-header { padding: 28px 28px 0; display: flex; gap: 18px; align-items: flex-start; }
+.t-logo { width: 60px; height: 60px; border: 1px solid rgba(68,153,255,0.25); background: rgba(10,30,70,0.5); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.t-tag { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(100,170,255,0.45); margin-bottom: 6px; }
+.t-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(20px, 4vw, 28px); color: #fff; letter-spacing: 0.04em; line-height: 1; }
+.t-divider { width: calc(100% - 56px); height: 1px; background: rgba(68,153,255,0.12); margin: 22px 28px; }
+.t-body { padding: 0 28px 0; }
+.t-section { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(100,170,255,0.38); margin-bottom: 10px; }
+.t-players { display: flex; flex-direction: column; gap: 8px; }
+.t-player { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: rgba(15,35,80,0.3); border: 1px solid rgba(68,153,255,0.1); }
+.t-num { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: rgba(80,160,255,0.35); min-width: 18px; line-height: 1; }
+.t-pname { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; color: rgba(210,230,255,0.88); letter-spacing: 0.02em; }
+.t-footer { padding: 18px 28px; margin-top: 22px; border-top: 1px solid rgba(68,153,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+.t-badge { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(100,170,255,0.4); }
+.t-close { background: none; border: 1px solid rgba(100,170,255,0.22); color: rgba(100,170,255,0.55); font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.t-close:hover { border-color: #fff; color: #fff; }
+
+.hud-title { position: fixed; top: 22px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 20; }
+.hud-title h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(16px, 3vw, 22px); color: rgba(110,180,255,0.75); letter-spacing: 0.35em; text-shadow: 0 0 28px rgba(60,140,255,0.45); }
+.hud-title p { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(100,170,255,0.3); margin-top: 3px; }
+
+.udea-btn { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(0,8,25,0.72); border: 1px solid rgba(0,61,165,0.55); color: rgba(100,180,255,0.75); font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 26px; cursor: pointer; backdrop-filter: blur(8px); transition: all 0.25s; white-space: nowrap; }
+.udea-btn:hover, .udea-btn.active { background: rgba(0,40,120,0.45); border-color: #4499ff; color: #fff; box-shadow: 0 0 24px rgba(0,100,255,0.4); }
+
+.legend { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 20; pointer-events: none; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(120,180,255,0.45); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }

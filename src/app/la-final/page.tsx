@@ -109,7 +109,8 @@ export default function FinalPage() {
     sceneRef.current = scene;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // clamp pixel ratio to avoid excessive GPU work on high-DPI devices
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
@@ -224,8 +225,14 @@ export default function FinalPage() {
 
     const clock = new THREE.Clock();
 
-    const animate = () => {
-      requestAnimationFrame(animate);
+    // animation control (pause when page is hidden to save GPU)
+    let rafId: number | null = null;
+    let running = true;
+
+    const animateFrame = () => {
+      if (!running) return;
+      rafId = requestAnimationFrame(animateFrame);
+
       const t = clock.getElapsedTime();
 
       if (autoRotate && !stateRef.current.isPointerDown) {
@@ -248,7 +255,35 @@ export default function FinalPage() {
       renderer.render(scene, camera);
     };
 
-    animate();
+    const startLoop = () => {
+      if (!running) {
+        running = true;
+        animateFrame();
+      } else if (rafId === null) {
+        animateFrame();
+      }
+    };
+
+    const stopLoop = () => {
+      running = false;
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        stopLoop();
+      } else {
+        startLoop();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibility, false);
+
+    // start
+    startLoop();
     showToast("Arrastra para mirar alrededor · Scroll para zoom");
 
     return () => {
@@ -260,6 +295,8 @@ export default function FinalPage() {
       window.removeEventListener("touchmove", onTouchMove);
       canvas.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      stopLoop();
       renderer.dispose();
       containerRef.current?.removeChild(renderer.domElement);
     };
