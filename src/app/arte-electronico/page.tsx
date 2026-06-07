@@ -304,6 +304,3 @@ export default function CartografiaPage() {
     </main>
   );
 }
-    </main>
-  );
-}
