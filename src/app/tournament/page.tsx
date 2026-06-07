@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
+import { useRouter } from 'next/navigation';
+import { data, label } from 'framer-motion/client';
+import HotspotPoint from '@/components/final/HotspotPoint';
+import HotspotModal from '@/components/final/HostpotModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,7 +34,7 @@ interface BracketNode {
 // ─── Universities ─────────────────────────────────────────────────────────────
 
 const UNIVERSITIES: University[] = [
-  { id: 'udea',    name: 'Universidad de Antioquia',            shortName: 'UdeA',     logo: '🔵', color: '#003DA5', players: [{ name: 'Ana Sofía Ramírez' },   { name: 'Valentina Gómez' }],     bracketSide: 'left',  seed: 1 },
+  { id: 'udea',    name: 'Universidad de Antioquia',            shortName: 'UdeA',     logo: '🔵', color: '#003DA5', players: [{ name: 'Laura Salazar' },   { name: 'Juliana Pulgarín' }],     bracketSide: 'left',  seed: 1 },
   { id: 'unal',    name: 'Universidad Nacional',                shortName: 'UNAL',     logo: '🟡', color: '#F5A800', players: [{ name: 'Daniela Torres' },      { name: 'Mariana Castillo' }],    bracketSide: 'left',  seed: 2 },
   { id: 'eafit',   name: 'Universidad EAFIT',                   shortName: 'EAFIT',    logo: '🟠', color: '#E87722', players: [{ name: 'Camila Ríos' },          { name: 'Sofía Montoya' }],       bracketSide: 'left',  seed: 3 },
   { id: 'udem',    name: 'Universidad de Medellín',             shortName: 'UdeM',     logo: '🔴', color: '#C8102E', players: [{ name: 'Laura Herrera' },        { name: 'Isabella Zapata' }],     bracketSide: 'left',  seed: 4 },
@@ -38,7 +42,7 @@ const UNIVERSITIES: University[] = [
   { id: 'upb',     name: 'Univ. Pontificia Bolivariana',        shortName: 'UPB',      logo: '🟤', color: '#7B3F00', players: [{ name: 'Juliana Restrepo' },     { name: 'Paola Vélez' }],         bracketSide: 'left',  seed: 6 },
   { id: 'ceat',    name: 'Politécnico Colombiano',              shortName: 'Poli',     logo: '⚫', color: '#555555', players: [{ name: 'Manuela Giraldo' },      { name: 'Alejandra Ruiz' }],      bracketSide: 'left',  seed: 7 },
   { id: 'uis',     name: 'Univ. Industrial de Santander',       shortName: 'UIS',      logo: '🔷', color: '#005F9E', players: [{ name: 'Valeria Mejía' },        { name: 'Catalina Pérez' }],      bracketSide: 'left',  seed: 8 },
-  { id: 'unisab',  name: 'Universidad de La Sabana',            shortName: 'Sabana',   logo: '🟣', color: '#6B2D8B', players: [{ name: 'Fernanda López' },       { name: 'Luciana Suárez' }],      bracketSide: 'right', seed: 1 },
+  { id: 'udes',  name: 'Universidad de Santander',            shortName: 'UdeS',   logo: '🟣', color: '#6B2D8B', players: [{ name: 'Fernanda López' },       { name: 'Luciana Suárez' }],      bracketSide: 'right', seed: 1 },
   { id: 'javert',  name: 'Pontificia Universidad Javeriana',    shortName: 'Javer.',   logo: '🔹', color: '#1C4587', players: [{ name: 'Andrea Salcedo' },       { name: 'María José Niño' }],     bracketSide: 'right', seed: 2 },
   { id: 'rosario', name: 'Universidad del Rosario',             shortName: 'Rosario',  logo: '🌹', color: '#8B0000', players: [{ name: 'Paula Guerrero' },       { name: 'Daniela Vargas' }],      bracketSide: 'right', seed: 3 },
   { id: 'andes',   name: 'Universidad de los Andes',            shortName: 'Andes',    logo: '⛰️', color: '#C41230', players: [{ name: 'Gabriela Mora' },        { name: 'Valentina Cruz' }],      bracketSide: 'right', seed: 4 },
@@ -51,6 +55,19 @@ const UNIVERSITIES: University[] = [
 // UdeA path node IDs (seed 1 left → always top bracket)
 const UDEA_PATH_IDS = new Set(['oct-l-0', 'qtr-l-0', 'semi-l-0', 'final-0']);
 
+const HOSTPOT = [
+    {
+        id: 'groups',
+        label: 'Groups',
+        position: { lon: 100, lat: 20 },
+        data: {
+            title: 'Fase de grupos',
+            description: 'La fase de grupos premia la constancia; la eliminación directa pone a prueba la capacidad de adaptarse bajo presión.',
+            image: '/laura-studio/images/groups.png',
+            imageAlt: 'Fase de grupos'
+        }
+    }
+]
 // ─── Bracket geometry ─────────────────────────────────────────────────────────
 //
 // Visual mapping (mirrors the image):
@@ -87,7 +104,13 @@ function lonLatToVec3(lon: number, lat: number, r: number): THREE.Vector3 {
 }
 
 // The 8 vertical slots for octavos (top-to-bottom, like the image)
-const OCT_LATS  = [60, 38, 16, -6, -28, -50, -68, -82]; // 8 seeds
+// Use an evenly spaced symmetric range around the equator. Reduce the
+// half-extent (`OCT_EXTENT`) to tighten vertical spacing while preserving symmetry.
+const OCT_COUNT = 8;
+const OCT_EXTENT = 42; // half-extent in degrees (was ~56); lower => tighter spacing
+const OCT_LATS: number[] = Array.from({ length: OCT_COUNT }, (_, i) => {
+  return OCT_EXTENT - (i * (2 * OCT_EXTENT) / (OCT_COUNT - 1));
+});
 // Cuartos: midpoint of each pair of octavos
 const QTR_LATS  = [
   (OCT_LATS[0] + OCT_LATS[1]) / 2,  // 49
@@ -124,11 +147,11 @@ function buildBracketNodes(): BracketNode[] {
   });
   // LEFT cuartos
   QTR_LATS.forEach((lat, i) => {
-    nodes.push({ id: `qtr-l-${i}`, round: 'cuartos', position: lonLatToVec3(LON.qtrL,  lat, R), universityId: null, side: 'left',  slotIndex: i });
+    nodes.push({ id: `qtr-l-${i}`, round: 'cuartos', position: lonLatToVec3(LON.qtrL,  lat, R), universityId: leftUnis[i * 2]?.id ?? null, side: 'left',  slotIndex: i });
   });
   // LEFT semis
   SEMI_LATS.forEach((lat, i) => {
-    nodes.push({ id: `semi-l-${i}`, round: 'semis',   position: lonLatToVec3(LON.semiL, lat, R), universityId: null, side: 'left',  slotIndex: i });
+    nodes.push({ id: `semi-l-${i}`, round: 'semis',   position: lonLatToVec3(LON.semiL, lat, R), universityId: leftUnis[i * 4]?.id ?? null, side: 'left',  slotIndex: i });
   });
 
   // RIGHT octavos
@@ -137,11 +160,11 @@ function buildBracketNodes(): BracketNode[] {
   });
   // RIGHT cuartos
   QTR_LATS.forEach((lat, i) => {
-    nodes.push({ id: `qtr-r-${i}`, round: 'cuartos', position: lonLatToVec3(LON.qtrR,  lat, R), universityId: null, side: 'right', slotIndex: i });
+    nodes.push({ id: `qtr-r-${i}`, round: 'cuartos', position: lonLatToVec3(LON.qtrR,  lat, R), universityId: rightUnis[i * 2]?.id ?? null, side: 'right', slotIndex: i });
   });
   // RIGHT semis
   SEMI_LATS.forEach((lat, i) => {
-    nodes.push({ id: `semi-r-${i}`, round: 'semis',   position: lonLatToVec3(LON.semiR, lat, R), universityId: null, side: 'right', slotIndex: i });
+    nodes.push({ id: `semi-r-${i}`, round: 'semis',   position: lonLatToVec3(LON.semiR, lat, R), universityId: rightUnis[i * 4]?.id ?? null, side: 'right', slotIndex: i });
   });
 
   // FINAL
@@ -226,6 +249,11 @@ export default function TournamentScene() {
 
   // CSS screen positions
   const [screenPos, setScreenPos] = useState<Map<string, { x: number; y: number; visible: boolean }>>(new Map());
+
+  const router = useRouter()
+    const [activeHotspot, setActiveHotspot] = useState<typeof HOSTPOT[0] | null>(null);
+    const [hotspotDebug, setHotspotDebug] = useState<string | null>(null);
+    const [threeReady, setThreeReady]       = useState(false);
 
   function updateUdeaLines(active: boolean) {
     lineMatMap.current.forEach((mat, key) => {
@@ -353,7 +381,7 @@ export default function TournamentScene() {
 
       const mat = new THREE.LineBasicMaterial({
         color:       isPath ? 0x003DA5 : (isLeft ? 0x1a3a6e : 0x1a2d5e),
-        transparent: true,
+        transparent: false,
         opacity:     isPath ? 0.7 : 0.35,
         linewidth:   1,
       });
@@ -592,7 +620,15 @@ export default function TournamentScene() {
                 :           'hs-btn hs-mid'
               }
               onClick={() => {
+                // If this node is the final marker, navigate to the La Final page.
+                if (isFinal) {
+                  router.push('/la-final');
+                  return;
+                }
+
+                // For non-final nodes, require a university to open the modal.
                 if (!uni) return;
+
                 if (isUdea) {
                   const next = !udeaActiveRef.current;
                   udeaActiveRef.current = next;
@@ -626,6 +662,25 @@ export default function TournamentScene() {
           </div>
         );
       })}
+
+      {/* HOSTPOT (page-level hotspots) */}
+      {HOSTPOT.map((hs) => (
+        <HotspotPoint
+          key={hs.id}
+          position={hs.position}
+          label={hs.label}
+          camera={cameraRef.current!}
+          renderer={rendererRef.current!}
+          scene={sceneRef.current!}
+          onClick={() => {
+            console.log('HOSTPOT clicked:', hs.id);
+            setHotspotDebug(hs.id);
+            setActiveHotspot(hs);
+            // clear debug after short delay
+            setTimeout(() => setHotspotDebug(null), 1800);
+          }}
+        />
+      ))}
 
       {/* UdeA path button */}
       <button
@@ -674,6 +729,14 @@ export default function TournamentScene() {
           </div>
         )}
       </div>
+
+      {/* Modal for HOSTPOT (page-level hotspots) */}
+      <HotspotModal
+        isOpen={!!activeHotspot}
+        onClose={() => setActiveHotspot(null)}
+        data={activeHotspot?.data}
+      />
+
     </div>
   );
 }

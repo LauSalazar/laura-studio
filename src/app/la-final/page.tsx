@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from 'next/navigation';
 import * as THREE from "three";
 import HotspotPoint from "../../components/final/HotspotPoint";
 import HotspotModal from "../../components/final/HostpotModal";
@@ -8,12 +9,12 @@ import HotspotModal from "../../components/final/HostpotModal";
 const HOTSPOTS = [
   {
     id: 'cup',
-    label: 'Cup',
+    label: 'Route',
     position: { lon: 180, lat: 50 },
     data: {
       title: 'La Copa',
       description:
-        'Quien gana no es solo quien hace más puntos; es el resultado visible de una red invisible de sincronías corporales, decisiones instantáneas, confianza mutua y adaptación constante.',
+        'Quien gana no es solo quien hace más puntos; es el resultado visible de una red invisible de sincronías corporales, decisiones instantáneas, confianza mutua, adaptación constante y trabajo continuo.',
       image: '/laura-studio/images/thropy.jpg',
       imageAlt: 'La copa',
       stats: [
@@ -25,7 +26,7 @@ const HOTSPOTS = [
   },
   {
     id: 'dupla1',
-    label: 'Dupla 1',
+    label: 'UdeA',
     position: { lon: 240, lat: -18 },
     data: {
       title: 'Presentación dupla 1',
@@ -41,7 +42,7 @@ const HOTSPOTS = [
   },
   {
     id: 'dupla2',
-    label: 'Dupla 2',
+    label: 'UdeS',
     position: { lon: 120, lat: -18 },
     data: {
       title: 'Presentación dupla 2',
@@ -53,6 +54,19 @@ const HOTSPOTS = [
         { label: 'Jugador 1', value: 'Sara' },
         { label: 'Jugador 2', value: 'Tatiana' },
       ],
+    },
+  },
+  {
+    id: 'estrategia',
+    label: 'Estrategia',
+    position: { lon: 30, lat: -18 },
+    data: {
+      title: 'Presentación de la estrategia',
+      description:
+        'La victoria se construyó haciendo mover al rival, anticipando sus patrones de ataque y transformando la precisión en ventaja competitiva.',
+      image: '/laura-studio/images/estrategia.png',
+      imageAlt: 'Estrategia',
+      stats: [],
     },
   },
 ];
@@ -80,6 +94,7 @@ export default function FinalPage() {
   });
   const [activeHotspot, setActiveHotspot] = useState<typeof HOTSPOTS[0] | null>(null);
   const [threeReady, setThreeReady]       = useState(false);
+  const router = useRouter();
 
   const DEFAULT_IMAGE_PATH = "/laura-studio/images/default-360.png";
 
@@ -632,7 +647,13 @@ export default function FinalPage() {
           camera={cameraRef.current!}
           renderer={rendererRef.current!}
           scene={sceneRef.current!}
-          onClick={() => setActiveHotspot(hs)}
+          onClick={() => {
+            if (hs.id === 'cup') {
+              router.push('/tournament');
+            } else {
+              setActiveHotspot(hs);
+            }
+          }}
         />
       ))}
 
