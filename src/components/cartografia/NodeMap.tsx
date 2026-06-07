@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import './NodeMap.css';
 import { nodos, conexiones, type Nodo } from "@/lib/cartografia";
 
 interface Props {
@@ -84,15 +85,7 @@ export function NodeMap({ nodoActivo, nodosVisitados, onNodoClick }: Props) {
       width="100%"
       style={{ display: "block" }}
     >
-      <defs>
-        {/* Partícula animada en líneas activas */}
-        <style>{`
-          @keyframes dash { to { stroke-dashoffset: -24; } }
-          .line-anim { stroke-dasharray: 4 8; animation: dash 2s linear infinite; }
-          @keyframes pulse { 0%,100%{r:4} 50%{r:6} }
-          .node-pulse { animation: pulse 2s ease-in-out infinite; }
-        `}</style>
-      </defs>
+      {/* SVG animation styles are moved to NodeMap.css */}
 
       {/* Fondo */}
       <rect width={W} height={H} fill="#0B0D10" rx="12" />

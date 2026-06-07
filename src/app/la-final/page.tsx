@@ -27,7 +27,7 @@ const HOTSPOTS = [
   {
     id: 'dupla1',
     label: 'UdeA',
-    position: { lon: 240, lat: -18 },
+    position: { lon: 210, lat: -28 },
     data: {
       title: 'Presentación dupla 1',
       description:
@@ -43,7 +43,7 @@ const HOTSPOTS = [
   {
     id: 'dupla2',
     label: 'UdeS',
-    position: { lon: 120, lat: -18 },
+    position: { lon: 150, lat: -28 },
     data: {
       title: 'Presentación dupla 2',
       description:
@@ -59,13 +59,26 @@ const HOTSPOTS = [
   {
     id: 'estrategia',
     label: 'Estrategia',
-    position: { lon: 30, lat: -18 },
+    position: { lon: 60, lat: -28 },
     data: {
       title: 'Presentación de la estrategia',
       description:
         'La victoria se construyó haciendo mover al rival, anticipando sus patrones de ataque y transformando la precisión en ventaja competitiva.',
       image: '/laura-studio/images/estrategia.png',
       imageAlt: 'Estrategia',
+      stats: [],
+    },
+  },
+  {
+    id: 'apoyo',
+    label: 'Apoyo',
+    position: { lon: -90, lat: 8 },
+    data: {
+      title: 'Red de apoyo',
+      description:
+        'Nadie juega completamente solo.',
+      image: '/laura-studio/images/apoyo.png',
+      imageAlt: 'Apoyo',
       stats: [],
     },
   },

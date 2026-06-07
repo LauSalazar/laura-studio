@@ -1,0 +1,4 @@
+@keyframes dash { to { stroke-dashoffset: -24; } }
+.line-anim { stroke-dasharray: 4 8; animation: dash 2s linear infinite; }
+@keyframes pulse { 0%,100%{r:4} 50%{r:6} }
+.node-pulse { animation: pulse 2s ease-in-out infinite; }
