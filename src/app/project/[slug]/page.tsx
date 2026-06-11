@@ -6,6 +6,7 @@ export function generateStaticParams() {
     { slug: "arte-electronico" },
     { slug: "la-final" },
     { slug: "rizoma-visual" },
+    { slug: "video-generativo" },
   ];
 }
 

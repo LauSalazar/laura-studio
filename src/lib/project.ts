@@ -81,5 +81,15 @@ export const projects: Project[] = [
     cover: "/images/rizoma-visual/cover.jpg",
     type: "interactive",
     description: "Rizoma creado a partir de una galeria visual.",
-  }
+  },
+  {
+    title: "Video generativo",
+    slug: "video-generativo",
+    category: "arte-generativo",
+    tags: ["Three.js", "GLSL", "shaders", "video"],
+    year: 2026,
+    cover: "/images/video-generativo/cover.jpg",
+    type: "interactive",
+    description: "Dos videos transformados por el mismo sistema generativo con shaders GLSL fluorescentes.",
+  },
 ];

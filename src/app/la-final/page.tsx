@@ -29,7 +29,7 @@ const HOTSPOTS = [
     label: 'UdeA',
     position: { lon: 210, lat: -28 },
     data: {
-      title: 'Presentación dupla 1',
+      title: 'Presentación',
       description:
         'Se distinguen por su precisión técnica y por convertir sus capacidades físicas en decisiones estratégicas dentro de la cancha.',
       image: '/laura-studio/images/dupla1.png',
@@ -45,7 +45,7 @@ const HOTSPOTS = [
     label: 'UdeS',
     position: { lon: 150, lat: -28 },
     data: {
-      title: 'Presentación dupla 2',
+      title: 'Presentación',
       description:
         'Destacan por un juego de potencia, donde fuerza y control corporal definen su presencia en la cancha.',
       image: '/laura-studio/images/dupla2.png',
@@ -61,7 +61,7 @@ const HOTSPOTS = [
     label: 'Estrategia',
     position: { lon: 60, lat: -28 },
     data: {
-      title: 'Presentación de la estrategia',
+      title: 'Estrategia',
       description:
         'La victoria se construyó haciendo mover al rival, anticipando sus patrones de ataque y transformando la precisión en ventaja competitiva.',
       image: '/laura-studio/images/estrategia.png',
