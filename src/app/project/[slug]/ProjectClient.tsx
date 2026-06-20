@@ -8,6 +8,7 @@ const REDIRECTS: Record<string, string> = {
   "arte-electronico": "/arte-electronico",
   "la-final": "/la-final",
   "rizoma-visual": "/rizoma-visual",
+  "video-generativo": "/video-generativo",
 };
 
 export function ProjectClient({ slug }: { slug: string }) {

@@ -51,9 +51,7 @@ export default function VideoGenerativoPage() {
             </p>
             <p className="font-body text-ink-muted leading-relaxed">
               Una máquina de interpretación visual que transforma el video original
-              mediante color, luz y geometría. El interés no está en el video en sí,
-              sino en cómo el sistema generativo reacciona a él — produciendo
-              resultados únicos a partir del mismo algoritmo.
+              mediante color y luz.
             </p>
           </div>
           <div>
