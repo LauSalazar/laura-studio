@@ -75,9 +75,13 @@ const fluorFragmentShader = `
 function VideoPlane({
   url,
   position,
+  width = 5.2,
+  height = 2.8,
 }: {
   url: string;
   position: [number, number, number];
+  width?: number;
+  height?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.ShaderMaterial>(null);
@@ -96,7 +100,7 @@ function VideoPlane({
 
   return (
     <mesh ref={meshRef} position={position}>
-      <planeGeometry args={[3.2, 1.8]} />
+      <planeGeometry args={[width, height]} />
       <shaderMaterial
         ref={matRef}
         vertexShader={fluorVertexShader}
@@ -111,15 +115,47 @@ function VideoPlane({
   );
 }
 
-function Scene({ video1Url, video2Url }: { video1Url: string; video2Url: string }) {
+function Scene({ videoUrls }: { videoUrls: string[] }) {
+  const count = videoUrls.length;
+
+  // Layout in columns of 2 (stacked vertically)
+  const cols = Math.ceil(count / 2);
+  const rows = Math.min(2, count);
+
+  // Adjust plane size and spacing based on number of columns
+  // Increase base sizes so videos occupy more canvas space
+  const planeWidth = cols > 3 ? 2.6 : count > 4 ? 3.6 : 4.8;
+  const planeHeight = (planeWidth / 3.2) * 1.8;
+  const gapX = planeWidth * 0.01; // horizontal gap
+  const spacingX = planeWidth + gapX;
+  const startX = -((cols - 1) * spacingX) / 2;
+
+  const gapY = planeHeight * 0.01; // vertical gap between stacked videos
+  const spacingY = planeHeight + gapY;
+  const yTop = spacingY / 2;
+  const yBottom = -spacingY / 2;
+
   return (
     <>
-      <VideoPlane url={video1Url} position={[-1.7, 0, 0]} />
-      <VideoPlane url={video2Url} position={[ 1.7, 0, 0]} />
+      {videoUrls.map((url, i) => {
+        const col = Math.floor(i / 2);
+        const row = i % 2; // 0 -> top, 1 -> bottom
+        const x = startX + col * spacingX;
+        const y = row === 0 ? yTop : yBottom;
+        return (
+          <VideoPlane
+            key={i}
+            url={url}
+            position={[x, y, 0]}
+            width={planeWidth}
+            height={planeHeight}
+          />
+        );
+      })}
       <EffectComposer>
         <Bloom
-          intensity={1.4}
-          luminanceThreshold={0.3}
+          intensity={1.5}
+          luminanceThreshold={0.9}
           luminanceSmoothing={0.9}
           mipmapBlur
         />
@@ -129,35 +165,38 @@ function Scene({ video1Url, video2Url }: { video1Url: string; video2Url: string 
 }
 
 interface Props {
-  video1Url: string;
-  video2Url: string;
-  label1?: string;
-  label2?: string;
+  videoUrls?: string[];
+  labels?: string[];
 }
 
-export function VideoShader({ video1Url, video2Url, label1 = "Video 1", label2 = "Video 2" }: Props) {
+export function VideoShader({ videoUrls, labels }: Props) {
+  if (!videoUrls || videoUrls.length === 0) return null;
+  const urls: string[] = videoUrls || []  ;
+  const count = urls.length;
+  const cols = Math.ceil(count / 2);
+
+  // Labels per video: use provided label if exists, otherwise fallback
+  const labelList = urls.map((_, i) => (labels && labels[i] ? labels[i] : `Video ${i + 1}`));
+
+  // Adjust camera distance based on number of columns so they fit in view
+  // Bring camera closer to make planes appear larger
+  const cameraZ = Math.max(4, 1 + cols * 1.2);
+
   return (
-    <div style={{ width: "100%", position: "relative" }}>
-      {/* Canvas R3F */}
-      <div style={{ width: "100%", aspectRatio: "16/5", background: "#000" }}>
+    <div>
+      <div style={{ width: "100%", height: "80%", aspectRatio: "16/6", background: "#000" }}>
         <Canvas
-          camera={{ position: [0, 0, 3.5], fov: 50 }}
+          camera={{ position: [0, 0, cameraZ], fov: 50 }}
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
           dpr={[1, 2]}
         >
-          <Scene video1Url={video1Url} video2Url={video2Url} />
+          <Scene videoUrls={urls} />
         </Canvas>
       </div>
 
-      {/* Labels */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: 2,
-        marginTop: 8,
-      }}>
-        {[label1, label2].map((label) => (
-          <p key={label} style={{
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.max(1, cols)}, 1fr)`, gap: 1, marginTop: 8 }}>
+        {labelList.map((l, i) => (
+          <p key={i} style={{
             fontFamily: "var(--font-mono)",
             fontSize: 11,
             color: "#8B949E",
@@ -165,7 +204,7 @@ export function VideoShader({ video1Url, video2Url, label1 = "Video 1", label2 =
             textAlign: "center",
             textTransform: "uppercase",
           }}>
-            {label}
+            {l}
           </p>
         ))}
       </div>

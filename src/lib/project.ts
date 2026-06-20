@@ -83,13 +83,13 @@ export const projects: Project[] = [
     description: "Rizoma creado a partir de una galeria visual.",
   },
   {
-    title: "Video generativo",
+    title: "Con otros ojos",
     slug: "video-generativo",
     category: "arte-generativo",
     tags: ["Three.js", "GLSL", "shaders", "video"],
     year: 2026,
     cover: "/images/video-generativo/cover.jpg",
     type: "interactive",
-    description: "Dos videos transformados por el mismo sistema generativo con shaders GLSL fluorescentes.",
+    description: "Videos transformados por el mismo sistema generativo"
   },
 ];

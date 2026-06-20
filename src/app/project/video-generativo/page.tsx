@@ -2,19 +2,20 @@ import dynamic from "next/dynamic";
 import { Navbar } from "@/components/layout/Navbar";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Video Generativo",
-  description: "Dos videos transformados por el mismo sistema generativo con shaders GLSL.",
-};
-
 const VideoShader = dynamic(
   () => import("@/components/sketches/VideoShader").then((m) => m.VideoShader),
   { ssr: false, loading: () => <div style={{ width: "100%", aspectRatio: "16/5", background: "#000" }} /> }
 );
 
 // ← reemplaza estas URLs con tus videos reales
-const VIDEO_1 = "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781139646/LauraUdea_qijjvh.mp4";
-const VIDEO_2 = "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781139533/Omnidroid_vrngw2.mp4";
+const VIDEOS = [
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781139646/LauraUdea_qijjvh.mp4",
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781139533/Omnidroid_vrngw2.mp4",
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916364/AlVolcanReflexion_1_btasdm.mp4",
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916708/LA_CONFIANCE_YOUTUBE_SHORT_d7nyon.mp4",
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916850/TOMAEREA_VIDEOCLIP_FRESAS_dgkwsn.mp4",
+  "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916960/Videoclip_musical_experimental_pln2pg.mp4"
+];
 
 export default function VideoGenerativoPage() {
   return (
@@ -27,20 +28,18 @@ export default function VideoGenerativoPage() {
             Arte generativo — 2026
           </p>
           <h1 className="font-display font-light text-4xl md:text-5xl text-ink mb-4">
-            Video generativo
+            Con otros ojos
           </h1>
           <p className="font-body text-ink-muted max-w-xl leading-relaxed">
-            Dos videos procesados por el mismo sistema generativo.
+            Videos procesados por el mismo sistema.
           </p>
         </div>
 
         {/* Canvas */}
         <div className="w-full rounded-2xl border border-ink-border overflow-hidden mb-16">
           <VideoShader
-            video1Url={VIDEO_1}
-            video2Url={VIDEO_2}
-            label1="video 01"
-            label2="video 02"
+            videoUrls={VIDEOS}
+            labels={["UdeA", "Al Volcán", "Toma Aerea", "Omnidroid", "La confiance", "Musical experimental"]}
           />
         </div>
 
