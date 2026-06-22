@@ -665,7 +665,7 @@ export default function TournamentScene() {
 
       {/* HOSTPOT (page-level hotspots) */}
       {HOSTPOT.map((hs) => (
-        <HotspotPoint
+          <HotspotPoint
           key={hs.id}
           position={hs.position}
           label={hs.label}
@@ -673,7 +673,7 @@ export default function TournamentScene() {
           renderer={rendererRef.current!}
           scene={sceneRef.current!}
           onClick={() => {
-            console.log('HOSTPOT clicked:', hs.id);
+            
             setHotspotDebug(hs.id);
             setActiveHotspot(hs);
             // clear debug after short delay

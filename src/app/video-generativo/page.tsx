@@ -2,8 +2,8 @@ import dynamic from "next/dynamic";
 import { Navbar } from "@/components/layout/Navbar";
 import type { Metadata } from "next";
 
-const VideoShader = dynamic(
-  () => import("@/components/sketches/VideoShader").then((m) => m.VideoShader),
+const PreloadedVideoShader = dynamic(
+  () => import("@/components/PreloadedVideoShader").then((m) => m.default),
   { ssr: false, loading: () => <div style={{ width: "100%", aspectRatio: "16/5", background: "#000" }} /> }
 );
 
@@ -16,6 +16,8 @@ const VIDEOS = [
   "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916850/TOMAEREA_VIDEOCLIP_FRESAS_dgkwsn.mp4",
   "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1781916960/Videoclip_musical_experimental_pln2pg.mp4"
 ];
+
+const AUDIO = "https://res.cloudinary.com/dmwzvtgkd/video/upload/v1782091132/sound_pnowhu.mp3";
 
 export default function VideoGenerativoPage() {
   return (
@@ -37,9 +39,10 @@ export default function VideoGenerativoPage() {
 
         {/* Canvas */}
         <div className="w-full rounded-2xl border border-ink-border overflow-hidden mb-16">
-          <VideoShader
+          <PreloadedVideoShader
             videoUrls={VIDEOS}
             labels={["UdeA", "Al Volcán", "Toma Aerea", "Omnidroid", "La confiance", "Musical experimental"]}
+            audioUrl={AUDIO}
           />
         </div>
 

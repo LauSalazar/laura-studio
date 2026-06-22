@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useVideoTexture } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
+import AudioPlayer from "@/components/AudioPlayer";
 
 const fluorVertexShader = `
   varying vec2 vUv;
@@ -167,13 +168,45 @@ function Scene({ videoUrls }: { videoUrls: string[] }) {
 interface Props {
   videoUrls?: string[];
   labels?: string[];
+  audioUrl?: string;
 }
 
-export function VideoShader({ videoUrls, labels }: Props) {
+export function VideoShader({ videoUrls, labels, audioUrl }: Props) {
   if (!videoUrls || videoUrls.length === 0) return null;
+  // previously an accidental guard returned early when an audioUrl existed;
+  // remove it so the component mounts and `AudioPlayer` can attach.
   const urls: string[] = videoUrls || []  ;
   const count = urls.length;
   const cols = Math.ceil(count / 2);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioReady, setAudioReady] = useState(false);
+  const [muted, setMuted] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).audioReady) {
+      setAudioReady(true);
+      return;
+    }
+    const id = setInterval(() => {
+      if ((window as any).audioReady) {
+        setAudioReady(true);
+        clearInterval(id);
+      }
+    }, 300);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    // initialize muted state from preloaded element if available
+    if (typeof window !== 'undefined') {
+      const pre = (window as any).__preloadedAudioElement as HTMLMediaElement | undefined;
+      if (pre) {
+        setMuted(!!pre.muted);
+      } else {
+        setMuted(true);
+      }
+    }
+  }, []);
 
   // Labels per video: use provided label if exists, otherwise fallback
   const labelList = urls.map((_, i) => (labels && labels[i] ? labels[i] : `Video ${i + 1}`));
@@ -190,9 +223,84 @@ export function VideoShader({ videoUrls, labels }: Props) {
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
           dpr={[1, 2]}
         >
-          <Scene videoUrls={urls} />
+            <Scene videoUrls={urls} />
+            {audioUrl && (
+              <AudioPlayer url={audioUrl} loop={true} volume={0.5} />
+            )}
         </Canvas>
       </div>
+
+      {/* Controls: play (user gesture) and mute toggle */}
+      {audioUrl && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 8 }}>
+          <button
+            disabled={!audioReady || audioPlaying}
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.playAppAudio) {
+                window.playAppAudio();
+                  // ensure audio is unmuted when user explicitly presses Play
+                  try {
+                    const pre = (window as any).__preloadedAudioElement as HTMLMediaElement | undefined;
+                    if (pre) {
+                      pre.muted = false;
+                      setMuted(false);
+                    } else if (window.setAppSoundMuted) {
+                      window.setAppSoundMuted(false);
+                      setMuted(false);
+                    }
+                  } catch (e) {
+                    console.warn('Could not unmute on play', e);
+                  }
+                  setAudioPlaying(true);
+              } else {
+              }
+            }}
+            style={{
+              background: audioReady ? '#111' : '#333',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: 6,
+              cursor: (!audioReady || audioPlaying) ? 'not-allowed' : 'pointer',
+              opacity: audioPlaying ? 0.6 : 1,
+              fontFamily: 'var(--font-mono)'
+            }}
+          >
+            {audioPlaying ? 'Playing audio' : audioReady ? 'Play audio' : 'Loading audio...'}
+          </button>
+
+          <button
+            onClick={() => {
+              try {
+                const pre = (window as any).__preloadedAudioElement as HTMLMediaElement | undefined;
+                const newMuted = !muted;
+                if (pre) {
+                  pre.muted = newMuted;
+                  setMuted(newMuted);
+                  return;
+                }
+                if (typeof window !== 'undefined' && window.setAppSoundMuted) {
+                  window.setAppSoundMuted(newMuted);
+                  setMuted(newMuted);
+                }
+              } catch (e) {
+                console.warn('Mute toggle failed', e);
+              }
+            }}
+            style={{
+              background: '#222',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-mono)'
+            }}
+          >
+            {muted ? 'Unmute' : 'Mute'}
+          </button>
+        </div>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.max(1, cols)}, 1fr)`, gap: 1, marginTop: 8 }}>
         {labelList.map((l, i) => (
